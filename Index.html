@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avior Ventures — We Build. We Automate. We Deliver.</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #e91e8c;
+    --pink-dark: #b5116e;
+    --pink-glow: rgba(233,30,140,0.35);
+    --blue: #00cfff;
+    --blue-dark: #0099cc;
+    --blue-glow: rgba(0,207,255,0.3);
+    --black: #050508;
+    --black2: #0d0d14;
+    --black3: #13131d;
+    --white: #f5f5fa;
+    --white2: rgba(245,245,250,0.07);
+    --white3: rgba(245,245,250,0.04);
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: var(--grain);
+    background-size: 300px 300px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 1;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  #cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--pink);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s, opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+  #cursor-trail {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--pink);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: all 0.12s ease;
+    opacity: 0.5;
+  }
+  body.hovering #cursor { width: 40px; height: 40px; background: var(--blue); opacity: 0.6; }
+  body.hovering #cursor-trail { width: 60px; height: 60px; border-color: var(--blue); opacity: 0.25; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 1.2rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(12px);
+    background: rgba(5,5,8,0.6);
+    border-bottom: 1px solid rgba(233,30,140,0.12);
+    transition: all 0.4s;
+  }
+  nav.scrolled { padding: 0.8rem 4rem; background: rgba(5,5,8,0.92); }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.08em;
+    background: linear-gradient(120deg, var(--pink), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: rgba(245,245,250,0.6);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px; background: var(--pink);
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 0.35s ease;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
+  .nav-cta {
+    padding: 0.6rem 1.5rem;
+    border: 1px solid var(--pink);
+    color: var(--pink);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .nav-cta::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--pink); transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s ease; z-index: -1;
+  }
+  .nav-cta:hover { color: #050508; }
+  .nav-cta:hover::before { transform: scaleX(1); }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #particle-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    padding: 0 2rem;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--pink);
+    border: 1px solid rgba(233,30,140,0.4);
+    padding: 0.4rem 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s ease forwards;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s ease forwards;
+  }
+  .hero-title .line-pink {
+    background: linear-gradient(135deg, var(--pink) 0%, #ff6fb7 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+  }
+  .hero-title .line-blue {
+    background: linear-gradient(135deg, var(--blue) 0%, #80e8ff 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+  }
+  .hero-sub {
+    font-size: 1.1rem;
+    color: rgba(245,245,250,0.55);
+    max-width: 520px;
+    margin: 0 auto 3rem;
+    line-height: 1.75;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.7s ease forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.9s ease forwards;
+  }
+  .btn-primary {
+    padding: 0.9rem 2.5rem;
+    background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 0 rgba(233,30,140,0);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px var(--pink-glow);
+  }
+  .btn-secondary {
+    padding: 0.9rem 2.5rem;
+    background: transparent;
+    color: var(--white);
+    font-weight: 500;
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(245,245,250,0.2);
+    transition: all 0.3s;
+  }
+  .btn-secondary:hover { border-color: var(--blue); color: var(--blue); box-shadow: 0 0 20px var(--blue-glow); }
+
+  .scroll-indicator {
+    position: absolute; bottom: 2.5rem; left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 1s 1.4s forwards;
+  }
+  .scroll-indicator span { font-size: 0.7rem; letter-spacing: 0.2em; color: rgba(245,245,250,0.3); text-transform: uppercase; }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--pink), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  /* ── STATS ── */
+  #stats {
+    padding: 5rem 4rem;
+    background: var(--black2);
+    border-top: 1px solid rgba(233,30,140,0.1);
+    border-bottom: 1px solid rgba(0,207,255,0.1);
+  }
+  .stats-grid {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+  .stat-item { text-align: center; }
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4.5rem;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--pink), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,245,250,0.4);
+    margin-top: 0.5rem;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+  .section-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--pink);
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    letter-spacing: 0.03em;
+    line-height: 0.95;
+    color: var(--white);
+  }
+  .section-title em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--pink), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── SERVICES (Orbital) ── */
+  #services {
+    padding: 7rem 4rem;
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+  #services::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(233,30,140,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .orbital-wrapper {
+    max-width: 1100px; margin: 0 auto;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 580px;
+  }
+  .orbit-center {
+    position: absolute;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(233,30,140,0.15), rgba(0,207,255,0.15));
+    border: 1px solid rgba(233,30,140,0.3);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    z-index: 10;
+    box-shadow: 0 0 60px rgba(233,30,140,0.1);
+  }
+  .orbit-center span:first-child {
+    font-family: 'Bebas Neue'; font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--pink), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .orbit-center span:last-child { font-size: 0.65rem; letter-spacing: 0.15em; color: rgba(245,245,250,0.3); }
+
+  .orbit-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px dashed rgba(245,245,250,0.07);
+    animation: spinSlow linear infinite;
+  }
+  .orbit-ring-1 { width: 280px; height: 280px; animation-duration: 20s; }
+  .orbit-ring-2 { width: 430px; height: 430px; animation-duration: 35s; animation-direction: reverse; }
+  .orbit-ring-3 { width: 580px; height: 580px; animation-duration: 55s; }
+
+  .service-planet {
+    position: absolute;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    cursor: pointer;
+  }
+  .planet-dot {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    border: 1px solid rgba(233,30,140,0.3);
+    background: var(--black3);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.4s ease;
+    position: relative;
+    box-shadow: 0 0 0 rgba(233,30,140,0);
+  }
+  .service-planet:hover .planet-dot {
+    transform: scale(1.2);
+    border-color: var(--pink);
+    box-shadow: 0 0 30px var(--pink-glow), inset 0 0 20px rgba(233,30,140,0.1);
+  }
+  .planet-icon { font-size: 1.8rem; }
+  .planet-label {
+    position: absolute;
+    top: calc(100% + 12px); left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,245,250,0.5);
+    transition: color 0.3s;
+  }
+  .service-planet:hover .planet-label { color: var(--pink); }
+
+  .service-detail-panel {
+    position: absolute; right: -20px;
+    top: 50%; transform: translateY(-50%);
+    width: 300px;
+    background: rgba(13,13,20,0.95);
+    border: 1px solid rgba(233,30,140,0.2);
+    padding: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+  }
+  .service-detail-panel.active { opacity: 1; pointer-events: auto; }
+  .sdp-tag { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink); margin-bottom: 0.7rem; }
+  .sdp-title { font-family: 'Space Grotesk'; font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; }
+  .sdp-text { font-size: 0.875rem; line-height: 1.7; color: rgba(245,245,250,0.55); margin-bottom: 1.5rem; }
+  .sdp-list { list-style: none; }
+  .sdp-list li { font-size: 0.8rem; color: rgba(245,245,250,0.4); padding: 0.35rem 0; border-bottom: 1px solid rgba(245,245,250,0.05); display: flex; align-items: center; gap: 0.5rem; }
+  .sdp-list li::before { content: '→'; color: var(--blue); font-size: 0.75rem; }
+
+  /* ── WORK / PROJECTS (Floating Islands) ── */
+  #work {
+    padding: 7rem 0;
+    background: var(--black2);
+    overflow: hidden;
+  }
+  #work .section-header { padding: 0 4rem; }
+  .projects-scroll-wrapper {
+    overflow-x: auto;
+    padding: 2rem 4rem 3rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--pink) transparent;
+    cursor: grab;
+  }
+  .projects-scroll-wrapper:active { cursor: grabbing; }
+  .projects-track {
+    display: flex;
+    gap: 2rem;
+    width: max-content;
+    user-select: none;
+  }
+  .project-island {
+    width: 380px;
+    background: var(--black3);
+    border: 1px solid rgba(245,245,250,0.06);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .project-island:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(233,30,140,0.08);
+    border-color: rgba(233,30,140,0.25);
+  }
+  .project-thumb {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-thumb-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.6s ease;
+  }
+  .project-island:hover .project-thumb-bg { transform: scale(1.05); }
+  .project-thumb-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, var(--black3));
+  }
+  .project-num {
+    position: absolute; top: 1.2rem; left: 1.5rem;
+    font-family: 'Bebas Neue'; font-size: 3rem;
+    background: linear-gradient(135deg, var(--pink), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0.25;
+  }
+  .project-body { padding: 1.5rem 1.8rem 2rem; }
+  .project-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .project-tag {
+    font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid rgba(0,207,255,0.25);
+    color: var(--blue);
+  }
+  .project-name { font-family: 'Space Grotesk'; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .project-desc { font-size: 0.875rem; color: rgba(245,245,250,0.45); line-height: 1.65; }
+  .project-arrow {
+    position: absolute; bottom: 1.5rem; right: 1.8rem;
+    color: var(--pink); font-size: 1.2rem;
+    opacity: 0; transform: translateX(-6px);
+    transition: all 0.3s;
+  }
+  .project-island:hover .project-arrow { opacity: 1; transform: translateX(0); }
+
+  /* ── AUTOMATION SHOWCASE ── */
+  #automation {
+    padding: 7rem 4rem;
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+  .automation-grid {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center;
+  }
+  .auto-text h3 {
+    font-family: 'Bebas Neue'; font-size: 2.5rem; letter-spacing: 0.04em;
+    margin-bottom: 1.2rem;
+    background: linear-gradient(135deg, var(--white), rgba(245,245,250,0.6));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .auto-text p { color: rgba(245,245,250,0.5); line-height: 1.8; margin-bottom: 1.5rem; font-weight: 300; }
+  .auto-pills { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .auto-pill {
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.4rem 0.9rem;
+    background: rgba(233,30,140,0.08);
+    border: 1px solid rgba(233,30,140,0.2);
+    color: rgba(233,30,140,0.8);
+  }
+
+  /* Flowchart */
+  .flow-diagram {
+    position: relative;
+    background: rgba(13,13,20,0.8);
+    border: 1px solid rgba(245,245,250,0.07);
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+  .flow-step {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.5rem;
+    background: rgba(245,245,250,0.03);
+    border: 1px solid rgba(245,245,250,0.06);
+    position: relative;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
+  }
+  .flow-step.animated { opacity: 1; transform: translateX(0); }
+  .flow-step.active {
+    border-color: var(--pink);
+    background: rgba(233,30,140,0.06);
+    box-shadow: 0 0 20px rgba(233,30,140,0.08);
+  }
+  .flow-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(233,30,140,0.1);
+    border: 1px solid rgba(233,30,140,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .flow-step.active .flow-icon { background: rgba(233,30,140,0.25); border-color: var(--pink); }
+  .flow-text { flex: 1; }
+  .flow-text strong { display: block; font-size: 0.875rem; font-weight: 600; color: var(--white); }
+  .flow-text span { font-size: 0.75rem; color: rgba(245,245,250,0.35); }
+  .flow-connector {
+    width: 1px; height: 12px;
+    background: linear-gradient(to bottom, rgba(233,30,140,0.4), transparent);
+    margin-left: calc(1.2rem + 18px);
+  }
+  .flow-status {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(245,245,250,0.15);
+    flex-shrink: 0;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  .flow-step.active .flow-status { background: var(--pink); box-shadow: 0 0 8px var(--pink); }
+  .flow-step.done .flow-status { background: var(--blue); box-shadow: 0 0 8px var(--blue); }
+  .flow-step.done { border-color: rgba(0,207,255,0.2); }
+
+  /* ── EASTER EGG terminal ── */
+  #easteregg-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 99990;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  #easteregg-overlay.show { display: flex; }
+  .terminal {
+    width: min(600px, 90vw);
+    background: #0a0a0f;
+    border: 1px solid var(--pink);
+    box-shadow: 0 0 80px rgba(233,30,140,0.3);
+    padding: 2rem;
+    font-family: 'Space Mono', 'Courier New', monospace;
+  }
+  .terminal-bar {
+    display: flex; align-items: center; gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(245,245,250,0.08);
+  }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .t-dot.r { background: #ff5f57; }
+  .t-dot.y { background: #ffbd2e; }
+  .t-dot.g { background: #28c840; }
+  .terminal-bar span { margin-left: auto; font-size: 0.7rem; color: rgba(245,245,250,0.25); letter-spacing: 0.1em; }
+  .terminal-line { font-size: 0.8rem; line-height: 2; }
+  .terminal-line .prompt { color: var(--pink); }
+  .terminal-line .cmd { color: var(--blue); }
+  .terminal-line .out { color: rgba(245,245,250,0.5); }
+  .terminal-line .highlight { color: var(--white); }
+  .close-terminal {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: rgba(245,245,250,0.3);
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    transition: color 0.3s;
+  }
+  .close-terminal:hover { color: var(--pink); }
+
+  /* ── WHY US ── */
+  #why {
+    padding: 7rem 4rem;
+    background: var(--black2);
+  }
+  .why-grid {
+    max-width: 1100px; margin: 4rem auto 0;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .why-card {
+    padding: 2.5rem 2rem;
+    border: 1px solid rgba(245,245,250,0.06);
+    background: var(--black3);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+  }
+  .why-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--pink), var(--blue));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .why-card:hover { transform: translateY(-4px); border-color: rgba(233,30,140,0.15); }
+  .why-card:hover::before { transform: scaleX(1); }
+  .why-num {
+    font-family: 'Bebas Neue'; font-size: 3.5rem;
+    color: rgba(233,30,140,0.12);
+    position: absolute; top: 1rem; right: 1.5rem;
+    line-height: 1;
+  }
+  .why-icon { font-size: 1.8rem; margin-bottom: 1.2rem; }
+  .why-card h3 { font-family: 'Space Grotesk'; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; }
+  .why-card p { font-size: 0.875rem; color: rgba(245,245,250,0.45); line-height: 1.7; }
+
+  /* ── CONTACT ── */
+  #contact {
+    padding: 7rem 4rem;
+    background: var(--black);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #contact::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(0,207,255,0.05), transparent 70%);
+    pointer-events: none;
+  }
+  .contact-inner { position: relative; z-index: 2; max-width: 600px; margin: 0 auto; }
+  .contact-email {
+    font-family: 'Bebas Neue'; font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, var(--pink), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    margin: 2rem 0;
+    text-decoration: none;
+    transition: opacity 0.3s;
+  }
+  .contact-email:hover { opacity: 0.75; }
+  .contact-form { margin-top: 3rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-field {
+    background: rgba(245,245,250,0.04);
+    border: 1px solid rgba(245,245,250,0.1);
+    color: var(--white);
+    padding: 0.9rem 1.2rem;
+    font-family: 'DM Sans'; font-size: 0.875rem;
+    width: 100%; outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .form-field::placeholder { color: rgba(245,245,250,0.25); }
+  .form-field:focus { border-color: var(--pink); box-shadow: 0 0 15px rgba(233,30,140,0.1); }
+  textarea.form-field { resize: vertical; min-height: 120px; }
+  .submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--pink), var(--blue));
+    color: #fff;
+    font-family: 'Space Grotesk';
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: opacity 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 4rem;
+    background: var(--black2);
+    border-top: 1px solid rgba(245,245,250,0.05);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue'; font-size: 1.5rem; letter-spacing: 0.08em;
+    background: linear-gradient(120deg, var(--pink), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  footer p { font-size: 0.75rem; color: rgba(245,245,250,0.2); letter-spacing: 0.05em; }
+
+  /* ── BLOB BG ── */
+  .blob-bg {
+    position: absolute; pointer-events: none; z-index: 0;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.12;
+  }
+
+  /* ── SCRAMBLE TEXT ── */
+  .scramble { display: inline-block; }
+
+  /* ── TILT CARD wrapper ── */
+  .tilt-card { transform-style: preserve-3d; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+  @keyframes blobMorph {
+    0%, 100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 70%; }
+    25% { border-radius: 30% 70% 50% 50% / 40% 30% 70% 60%; }
+    50% { border-radius: 50% 50% 30% 70% / 60% 40% 60% 40%; }
+    75% { border-radius: 70% 30% 60% 40% / 30% 70% 30% 70%; }
+  }
+  @keyframes blobMorph2 {
+    0%, 100% { border-radius: 40% 60% 30% 70% / 60% 30% 70% 40%; }
+    33% { border-radius: 70% 30% 60% 40% / 40% 70% 30% 60%; }
+    66% { border-radius: 30% 70% 40% 60% / 70% 40% 60% 30%; }
+  }
+  @keyframes counterTick { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(233,30,140,0.2); }
+    50% { box-shadow: 0 0 50px rgba(233,30,140,0.45), 0 0 100px rgba(0,207,255,0.15); }
+  }
+
+  /* in-view fade */
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+  .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal-left.in-view { opacity: 1; transform: translateX(0); }
+  .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal-right.in-view { opacity: 1; transform: translateX(0); }
+  .stagger > * { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .stagger.in-view > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0s; }
+  .stagger.in-view > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.1s; }
+  .stagger.in-view > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.2s; }
+  .stagger.in-view > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.3s; }
+
+  /* Konami hint */
+  #konami-hint {
+    position: fixed; bottom: 1rem; right: 1.5rem;
+    font-size: 0.65rem; letter-spacing: 0.1em; color: rgba(245,245,250,0.12);
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.5s;
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
+<!-- BLOB BACKGROUNDS -->
+<div class="blob-bg" id="blob1" style="width:500px;height:500px;background:var(--pink);top:-100px;left:-150px;animation:blobMorph 12s ease-in-out infinite;"></div>
+<div class="blob-bg" id="blob2" style="width:400px;height:400px;background:var(--blue);bottom:200px;right:-120px;animation:blobMorph2 15s ease-in-out infinite;"></div>
+
+<!-- EASTER EGG OVERLAY -->
+<div id="easteregg-overlay">
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+      <span>avior@ventures ~ terminal</span>
+    </div>
+    <div id="terminal-body"></div>
+    <div class="close-terminal" onclick="closeEasterEgg()">[ Press Esc or click to close ]</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">Avior Ventures</div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#automation">Automation</a></li>
+    <li><a href="#why">Why Us</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Let's Talk</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="particle-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag">IT Services & Automation</div>
+    <h1 class="hero-title">
+      <span class="line-pink scramble" data-text="AVIOR">AVIOR</span>
+      <span class="line-blue scramble" data-text="VENTURES">VENTURES</span>
+    </h1>
+    <p class="hero-sub">We build powerful web experiences, craft scalable applications, and automate the workflows slowing your business down.</p>
+    <div class="hero-actions">
+      <a href="#services" class="btn-primary">Explore Services</a>
+      <a href="#work" class="btn-secondary">View Our Work</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="stats-grid stagger">
+    <div class="stat-item">
+      <div class="stat-number counter" data-target="2" data-suffix="+">0</div>
+      <div class="stat-label">Websites Delivered</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number counter" data-target="3" data-suffix="">0</div>
+      <div class="stat-label">Core Services</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number counter" data-target="100" data-suffix="%">0</div>
+      <div class="stat-label">Client Satisfaction</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number counter" data-target="5" data-suffix="+">0</div>
+      <div class="stat-label">Automations Built</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-header reveal">
+    <span class="section-tag">What We Do</span>
+    <h2 class="section-title">Our <em>Services</em></h2>
+  </div>
+  <div class="orbital-wrapper">
+    <!-- Rings -->
+    <div class="orbit-ring orbit-ring-1"></div>
+    <div class="orbit-ring orbit-ring-2"></div>
+    <div class="orbit-ring orbit-ring-3"></div>
+    <!-- Center -->
+    <div class="orbit-center">
+      <span>Avior</span>
+      <span>Core</span>
+    </div>
+    <!-- Planets -->
+    <div class="service-planet" id="planet-web" style="top:50%;left:50%;transform:translate(calc(-50% - 140px),calc(-50% - 200px))">
+      <div class="planet-dot tilt-card" data-service="web">
+        <span class="planet-icon">🌐</span>
+      </div>
+      <div class="planet-label">Web Dev</div>
+    </div>
+    <div class="service-planet" id="planet-app" style="top:50%;left:50%;transform:translate(calc(-50% + 200px),calc(-50% + 30px))">
+      <div class="planet-dot tilt-card" data-service="app">
+        <span class="planet-icon">📱</span>
+      </div>
+      <div class="planet-label">App Dev</div>
+    </div>
+    <div class="service-planet" id="planet-soft" style="top:50%;left:50%;transform:translate(calc(-50% - 200px),calc(-50% + 160px))">
+      <div class="planet-dot tilt-card" data-service="software">
+        <span class="planet-icon">⚙️</span>
+      </div>
+      <div class="planet-label">Software</div>
+    </div>
+    <!-- Detail panel -->
+    <div class="service-detail-panel" id="service-panel">
+      <div class="sdp-tag" id="sdp-tag">Service</div>
+      <div class="sdp-title" id="sdp-title">—</div>
+      <div class="sdp-text" id="sdp-text">—</div>
+      <ul class="sdp-list" id="sdp-list"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="section-header reveal">
+    <span class="section-tag">Portfolio</span>
+    <h2 class="section-title">Our <em>Work</em></h2>
+  </div>
+  <div class="projects-scroll-wrapper" id="projectsScroll">
+    <div class="projects-track" id="projectsTrack">
+      <!-- Project 1 -->
+      <div class="project-island">
+        <div class="project-thumb">
+          <div class="project-thumb-bg" style="background:linear-gradient(135deg,#1a0a1e,#0d0530,#050f1a);width:100%;height:100%;"></div>
+          <div class="project-thumb-overlay"></div>
+          <div class="project-num">01</div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Web Dev</span><span class="project-tag">UI/UX</span></div>
+          <div class="project-name">Business Landing Page</div>
+          <div class="project-desc">A fully responsive, performance-optimized landing page with conversion-driven design for a growing SME.</div>
+        </div>
+        <div class="project-arrow">→</div>
+      </div>
+      <!-- Project 2 -->
+      <div class="project-island">
+        <div class="project-thumb">
+          <div class="project-thumb-bg" style="background:linear-gradient(135deg,#0a1a0a,#05200d,#001510);width:100%;height:100%;"></div>
+          <div class="project-thumb-overlay"></div>
+          <div class="project-num">02</div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Automation</span><span class="project-tag">Scraping</span></div>
+          <div class="project-name">Data Intelligence Pipeline</div>
+          <div class="project-desc">Web scraping + processing system delivering clean, actionable market data to a small business client daily.</div>
+        </div>
+        <div class="project-arrow">→</div>
+      </div>
+      <!-- Project 3 placeholder -->
+      <div class="project-island">
+        <div class="project-thumb">
+          <div class="project-thumb-bg" style="background:linear-gradient(135deg,#1a0d00,#1a0a10,#050518);width:100%;height:100%;"></div>
+          <div class="project-thumb-overlay"></div>
+          <div class="project-num">03</div>
+        </div>
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Software</span><span class="project-tag">SaaS</span></div>
+          <div class="project-name">Workflow Automation Tool</div>
+          <div class="project-desc">Custom internal tooling built for a client to replace 6+ hours of manual work with a single automated trigger.</div>
+        </div>
+        <div class="project-arrow">→</div>
+      </div>
+      <!-- Placeholder "Next" -->
+      <div class="project-island" style="display:flex;align-items:center;justify-content:center;min-height:380px;">
+        <div style="text-align:center;padding:2rem;">
+          <div style="font-family:'Bebas Neue';font-size:3rem;background:linear-gradient(135deg,var(--pink),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem;">YOURS?</div>
+          <p style="color:rgba(245,245,250,0.3);font-size:0.875rem;line-height:1.6;">Your project could live right here.<br>Let's build something remarkable together.</p>
+          <a href="#contact" class="btn-primary" style="display:inline-block;margin-top:1.5rem;font-size:0.75rem;">Start a Project</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTOMATION -->
+<section id="automation">
+  <div class="automation-grid">
+    <div class="auto-text reveal-left">
+      <span class="section-tag">Signature Service</span>
+      <h3>Intelligent Workflow Automation</h3>
+      <p>We replace tedious, repetitive manual processes with smart automated pipelines. Our systems scrape, parse, filter and deliver exactly the data your business needs — on schedule, without human intervention.</p>
+      <p>From competitor price monitoring to lead enrichment, if a human can do it on a screen, we can automate it.</p>
+      <div class="auto-pills">
+        <span class="auto-pill">Web Scraping</span>
+        <span class="auto-pill">Data Parsing</span>
+        <span class="auto-pill">Scheduled Jobs</span>
+        <span class="auto-pill">Custom Dashboards</span>
+        <span class="auto-pill">Email Reports</span>
+      </div>
+    </div>
+    <div class="flow-diagram reveal-right" id="flowDiagram">
+      <div class="flow-step" id="fs1">
+        <div class="flow-icon">🌐</div>
+        <div class="flow-text"><strong>Target Website(s)</strong><span>Public data sources identified</span></div>
+        <div class="flow-status"></div>
+      </div>
+      <div class="flow-connector"></div>
+      <div class="flow-step" id="fs2">
+        <div class="flow-icon">🕷️</div>
+        <div class="flow-text"><strong>Automated Scraper</strong><span>Custom bot extracts raw data</span></div>
+        <div class="flow-status"></div>
+      </div>
+      <div class="flow-connector"></div>
+      <div class="flow-step" id="fs3">
+        <div class="flow-icon">🔧</div>
+        <div class="flow-text"><strong>Processing Engine</strong><span>Clean, filter, normalize</span></div>
+        <div class="flow-status"></div>
+      </div>
+      <div class="flow-connector"></div>
+      <div class="flow-step" id="fs4">
+        <div class="flow-icon">📊</div>
+        <div class="flow-text"><strong>Client Dashboard</strong><span>Insights delivered automatically</span></div>
+        <div class="flow-status"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="section-header reveal" style="text-align:center">
+    <span class="section-tag">Differentiators</span>
+    <h2 class="section-title">Why <em>Avior</em></h2>
+  </div>
+  <div class="why-grid stagger">
+    <div class="why-card tilt-card">
+      <div class="why-num">01</div>
+      <div class="why-icon">⚡</div>
+      <h3>We Ship Fast</h3>
+      <p>No endless sprints. We cut through scope creep and deliver working products quickly without sacrificing quality.</p>
+    </div>
+    <div class="why-card tilt-card">
+      <div class="why-num">02</div>
+      <div class="why-icon">🎯</div>
+      <h3>Small Business First</h3>
+      <p>Built for startups and growing SMEs. We understand your constraints and build solutions that punch above their weight.</p>
+    </div>
+    <div class="why-card tilt-card">
+      <div class="why-num">03</div>
+      <div class="why-icon">🔁</div>
+      <h3>Automate Everything</h3>
+      <p>We don't just build — we eliminate manual work. Every engagement is an opportunity to save you time and money long-term.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner reveal">
+    <span class="section-tag">Get In Touch</span>
+    <h2 class="section-title">Let's Build<br><em>Together</em></h2>
+    <a href="mailto:hello@aviorventures.in" class="contact-email">hello@aviorventures.in</a>
+    <div class="contact-form">
+      <div class="form-row">
+        <input type="text" class="form-field" placeholder="Your Name">
+        <input type="email" class="form-field" placeholder="Email Address">
+      </div>
+      <input type="text" class="form-field" placeholder="What do you need? (Web / App / Automation)" style="display:block;width:100%;margin-bottom:1rem;">
+      <textarea class="form-field" placeholder="Tell us about your project..."></textarea>
+      <button class="submit-btn" onclick="handleSubmit(event)">Send Message →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Avior Ventures</div>
+  <p>© 2025 Avior Ventures. All rights reserved.</p>
+  <p style="font-size:0.65rem;color:rgba(245,245,250,0.1);">↑↑↓↓←→←→BA</p>
+</footer>
+
+<div id="konami-hint">↑↑↓↓←→←→BA</div>
+
+<script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const trail = document.getElementById('cursor-trail');
+let mx = 0, my = 0, tx = 0, ty = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
+setInterval(() => {
+  tx += (mx - tx) * 0.15; ty += (my - ty) * 0.15;
+  trail.style.left = tx + 'px'; trail.style.top = ty + 'px';
+}, 16);
+document.querySelectorAll('a, button, .service-planet, .project-island, .why-card, .planet-dot').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});
+
+// ── NAV SCROLL ──
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── PARTICLE CANVAS ──
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], mouseX = 0, mouseY = 0;
+function resizeCanvas() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W; this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.4; this.vy = (Math.random() - 0.5) * 0.4;
+    this.r = Math.random() * 1.5 + 0.5;
+    this.color = Math.random() > 0.5 ? '#e91e8c' : '#00cfff';
+    this.alpha = Math.random() * 0.5 + 0.1;
+  }
+  update() {
+    const dx = mouseX - this.x, dy = mouseY - this.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 120) { this.vx -= dx/dist * 0.08; this.vy -= dy/dist * 0.08; }
+    this.vx *= 0.98; this.vy *= 0.98;
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+    ctx.fillStyle = this.color; ctx.globalAlpha = this.alpha; ctx.fill();
+  }
+}
+for (let i = 0; i < 140; i++) particles.push(new Particle());
+
+function drawConnections() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i+1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx+dy*dy);
+      if (d < 100) {
+        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+        const alpha = (1 - d/100) * 0.15;
+        ctx.strokeStyle = `rgba(233,30,140,${alpha})`; ctx.lineWidth = 0.5;
+        ctx.globalAlpha = 1; ctx.stroke();
+      }
+    }
+  }
+}
+function animateParticles() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawConnections();
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ── TEXT SCRAMBLE ──
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
+function scrambleText(el, finalText, duration = 1200) {
+  let start = null;
+  function step(ts) {
+    if (!start) start = ts;
+    const progress = (ts - start) / duration;
+    const revealCount = Math.floor(progress * finalText.length);
+    let display = '';
+    for (let i = 0; i < finalText.length; i++) {
+      if (i < revealCount) display += finalText[i];
+      else display += chars[Math.floor(Math.random() * chars.length)];
+    }
+    el.textContent = display;
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = finalText;
+  }
+  requestAnimationFrame(step);
+}
+setTimeout(() => {
+  document.querySelectorAll('.scramble').forEach(el => scrambleText(el, el.dataset.text));
+}, 600);
+
+// ── REVEAL ON SCROLL ──
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .stagger').forEach(el => revealObserver.observe(el));
+
+// ── COUNTER ANIMATION ──
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const el = e.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      let current = 0;
+      const step = target / 40;
+      const interval = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = Math.floor(current) + suffix;
+        if (current >= target) clearInterval(interval);
+      }, 30);
+      counterObs.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
+
+// ── 3D TILT CARDS ──
+document.querySelectorAll('.tilt-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = `perspective(600px) rotateY(${x*16}deg) rotateX(${-y*16}deg) scale(1.04)`;
+    const shine = card.querySelector('.shine');
+    if (shine) { shine.style.background = `radial-gradient(circle at ${e.clientX - r.left}px ${e.clientY - r.top}px, rgba(255,255,255,0.08), transparent 60%)`; }
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+// ── ORBITAL SERVICE PANEL ──
+const serviceData = {
+  web: {
+    tag: 'Web Development',
+    title: 'Web Development',
+    text: 'We design and develop high-performance, visually stunning websites tailored to your brand. From landing pages to full-stack web apps.',
+    list: ['Custom responsive design', 'React / Next.js / vanilla', 'CMS integration', 'SEO optimized', 'Fast load times']
+  },
+  app: {
+    tag: 'App Development',
+    title: 'App Development',
+    text: 'Cross-platform mobile applications built with React Native or Flutter. Smooth UX, native performance, deployed to iOS and Android.',
+    list: ['React Native / Flutter', 'iOS & Android', 'API integration', 'Push notifications', 'App Store launch support']
+  },
+  software: {
+    tag: 'Software Solutions',
+    title: 'Custom Software',
+    text: 'Bespoke software built around your business logic. Internal tools, admin dashboards, SaaS MVPs — we bring complex ideas to life.',
+    list: ['SaaS MVP development', 'Admin dashboards', 'API development', 'Database architecture', 'Cloud deployment']
+  }
+};
+document.querySelectorAll('[data-service]').forEach(el => {
+  el.addEventListener('click', () => {
+    const key = el.dataset.service;
+    const data = serviceData[key];
+    const panel = document.getElementById('service-panel');
+    document.getElementById('sdp-tag').textContent = data.tag;
+    document.getElementById('sdp-title').textContent = data.title;
+    document.getElementById('sdp-text').textContent = data.text;
+    const list = document.getElementById('sdp-list');
+    list.innerHTML = data.list.map(i => `<li>${i}</li>`).join('');
+    panel.classList.add('active');
+  });
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('[data-service]') && !e.target.closest('#service-panel'))
+    document.getElementById('service-panel').classList.remove('active');
+});
+
+// ── PROJECTS DRAG SCROLL ──
+const scroller = document.getElementById('projectsScroll');
+let isDown = false, startX, scrollLeft;
+scroller.addEventListener('mousedown', e => { isDown = true; scroller.style.cursor = 'grabbing'; startX = e.pageX - scroller.offsetLeft; scrollLeft = scroller.scrollLeft; });
+scroller.addEventListener('mouseleave', () => isDown = false);
+scroller.addEventListener('mouseup', () => isDown = false);
+scroller.addEventListener('mousemove', e => { if (!isDown) return; e.preventDefault(); const x = e.pageX - scroller.offsetLeft; scroller.scrollLeft = scrollLeft - (x - startX) * 1.4; });
+
+// Add momentum
+let velocity = 0, lastScrollLeft = 0;
+setInterval(() => { velocity = scroller.scrollLeft - lastScrollLeft; lastScrollLeft = scroller.scrollLeft; }, 16);
+
+// ── AUTOMATION FLOWCHART ANIMATION ──
+const flowSteps = ['fs1','fs2','fs3','fs4'];
+let flowInterval = null;
+const flowObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      flowSteps.forEach((id, i) => {
+        setTimeout(() => {
+          document.getElementById(id).classList.add('animated');
+        }, i * 200);
+      });
+      setTimeout(startFlowLoop, 1000);
+      flowObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+flowObs.observe(document.getElementById('flowDiagram'));
+
+let activeStep = -1;
+function startFlowLoop() {
+  if (flowInterval) clearInterval(flowInterval);
+  activeStep = 0;
+  function tick() {
+    flowSteps.forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.classList.remove('active');
+      if (i < activeStep) el.classList.add('done');
+      else el.classList.remove('done');
+    });
+    if (activeStep < flowSteps.length) document.getElementById(flowSteps[activeStep]).classList.add('active');
+    if (activeStep === flowSteps.length) {
+      setTimeout(() => {
+        flowSteps.forEach(id => { document.getElementById(id).classList.remove('active','done'); });
+        activeStep = 0;
+      }, 1200);
+    }
+    activeStep++;
+  }
+  tick();
+  flowInterval = setInterval(tick, 1000);
+}
+
+// ── KONAMI CODE EASTER EGG ──
+const konamiSequence = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiIndex = 0;
+document.addEventListener('keydown', e => {
+  if (e.key === konamiSequence[konamiIndex]) {
+    konamiIndex++;
+    if (konamiIndex === konamiSequence.length) { openEasterEgg(); konamiIndex = 0; }
+  } else { konamiIndex = 0; }
+  if (e.key === 'Escape') closeEasterEgg();
+});
+document.querySelector('footer p:last-child').addEventListener('click', openEasterEgg);
+
+const terminalLines = [
+  { prompt: '~/avior', cmd: 'whoami', delay: 200 },
+  { out: 'avior_ventures — we build things that matter', delay: 800 },
+  { prompt: '~/avior', cmd: 'cat team.txt', delay: 1400 },
+  { out: 'Founders: Visionaries with a keyboard and a deadline', delay: 2000 },
+  { out: 'Stack: React · Node · Python · Love · Coffee', delay: 2400 },
+  { prompt: '~/avior', cmd: 'cat services.json', delay: 3000 },
+  { out: '["Web Dev", "App Dev", "Software", "Automation"]', delay: 3600, highlight: true },
+  { prompt: '~/avior', cmd: 'echo "Built this site ourselves 😏"', delay: 4200 },
+  { out: 'Built this site ourselves 😏', delay: 4800 },
+  { prompt: '~/avior', cmd: 'cat secret.txt', delay: 5400 },
+  { out: '🚀 We are just getting started. Watch this space.', delay: 6000, highlight: true },
+];
+function openEasterEgg() {
+  const overlay = document.getElementById('easteregg-overlay');
+  const body = document.getElementById('terminal-body');
+  overlay.classList.add('show');
+  body.innerHTML = '';
+  terminalLines.forEach(line => {
+    setTimeout(() => {
+      const div = document.createElement('div');
+      div.className = 'terminal-line';
+      if (line.cmd) div.innerHTML = `<span class="prompt">avior@ventures ${line.prompt} $</span> <span class="cmd">${line.cmd}</span>`;
+      else if (line.highlight) div.innerHTML = `<span class="highlight">${line.out}</span>`;
+      else div.innerHTML = `<span class="out">${line.out}</span>`;
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+    }, line.delay);
+  });
+}
+function closeEasterEgg() { document.getElementById('easteregg-overlay').classList.remove('show'); }
+document.getElementById('easteregg-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeEasterEgg(); });
+
+// ── SUBMIT ──
+function handleSubmit(e) {
+  const btn = e.target;
+  btn.textContent = 'Sending...'; btn.disabled = true;
+  setTimeout(() => { btn.textContent = 'Message Sent ✓'; btn.style.background = 'linear-gradient(135deg,#0099cc,#005580)'; }, 1200);
+}
+
+// ── KONAMI HINT FADE ──
+setTimeout(() => { const h = document.getElementById('konami-hint'); if(h) h.style.opacity = '0'; }, 8000);
+</script>
+</body>
+</html>
